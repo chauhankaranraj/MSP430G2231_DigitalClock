@@ -9,7 +9,29 @@
 
 // Led 1-7 of seven segment display correspond to outputs A-G of bit shift register
 
-int main(void) {
+// index i of array digitx denotes whether led i will be on or off for the digitx
+const char digit0[] = {1, 1, 1, 1, 1, 1, 0};
+const char digit1[] = {0, 1, 1, 0, 0, 0, 0};
+const char digit2[] = {1, 1, 0, 1, 1, 0, 1};
+const char digit3[] = {1, 1, 1, 1, 0, 0, 1};
+const char digit4[] = {0, 1, 1, 0, 0, 1, 1};
+const char digit5[] = {1, 0, 1, 1, 0, 1, 1};
+const char digit6[] = {1, 0, 1, 1, 1, 1, 1};
+const char digit7[] = {1, 1, 1, 0, 0, 0, 0};
+const char digit8[] = {1, 1, 1, 1, 1, 1, 1};
+const char digit9[] = {1, 1, 1, 1, 0, 1, 1};
+
+const char* digits[10];
+
+char secondsUnitsDigitIndex = 0;
+char secondsTensDigitIndex = 0;
+char minutesUnitsDigitIndex = 0;
+char minutesTensDigitIndex = 0;
+
+char timeCounter = 0;
+
+int main(void){
+
     // TODO: update watch dog timer to make clock display go back to 0000 when the day is over
     WDTCTL = WDTPW | WDTHOLD;   // Stop watchdog timer
 
@@ -22,19 +44,6 @@ int main(void) {
     P1OUT = 0;  // setting all gpio to zero initially
     P1DIR = 1 + 2 + 4 + 8 + 16 + 32; //  P1.0 - P1.5 are outputs, P1.6 and P1.7 are not being used
 
-    // index i of array digitx denotes whether led i will be on or off for the digitx
-    const char digit0[] = {1, 1, 1, 1, 1, 1, 0};
-    const char digit1[] = {0, 1, 1, 0, 0, 0, 0};
-    const char digit2[] = {1, 1, 0, 1, 1, 0, 1};
-    const char digit3[] = {1, 1, 1, 1, 0, 0, 1};
-    const char digit4[] = {0, 1, 1, 0, 0, 1, 1};
-    const char digit5[] = {1, 0, 1, 1, 0, 1, 1};
-    const char digit6[] = {1, 0, 1, 1, 1, 1, 1};
-    const char digit7[] = {1, 1, 1, 0, 0, 0, 0};
-    const char digit8[] = {1, 1, 1, 1, 1, 1, 1};
-    const char digit9[] = {1, 1, 1, 1, 0, 1, 1};
-
-    const char* digits[10];
     digits[0] = digit0;
     digits[1] = digit1;
     digits[2] = digit2;
@@ -46,15 +55,19 @@ int main(void) {
     digits[8] = digit8;
     digits[9] = digit9;
 
-    char secondsUnitsDigitIndex = 0;
-    char secondsTensDigitIndex = 0;
-    char minutesUnitsDigitIndex = 0;
-    char minutesTensDigitIndex = 0;
+    CCTL0 = CCIE;
+    CCR0 = 49999;  //FIXME: CCR0 cannot take numbers bigger than 999980?
+    TACTL = TASSEL_2 + MC_1;
+    __bis_SR_register(GIE+LPM0_bits);
+    // wait for timer for completion of 0.99998 seconds, i.e., reach CCR0 value of 49999 20 times
+}
 
-    while(1) {
-        // wait for timer for completion of one minute
-        _delay_cycles(1000000);
+#pragma vector = TIMERA0_VECTOR
+__interrupt void Timer_A (void) {
 
+    timeCounter++;
+
+    if (timeCounter == 20) {
         // update shift registers with values
         signed char led;
         for (led = 6; led >= 0; led--) {
@@ -96,5 +109,7 @@ int main(void) {
                 }
             }
         }
+
+        timeCounter = 0;
     }
 }
