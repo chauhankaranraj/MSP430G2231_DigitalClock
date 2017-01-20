@@ -2,7 +2,7 @@
 <link_info>
    <banner>MSP430 Linker Unix v16.9.0.LTS</banner>
    <copyright>Copyright (c) 2003-2015 Texas Instruments Incorporated</copyright>
-   <link_time>0x588264c0</link_time>
+   <link_time>0x5882a1db</link_time>
    <link_errors>0x0</link_errors>
    <output_file>SevenSegmentDisplayClock.out</output_file>
    <entry_point>

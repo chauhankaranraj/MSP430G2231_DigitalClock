@@ -7,7 +7,7 @@
 	<deviceEndianness value="little"/>
 	<codegenToolVersion value="16.9.0.LTS"/>
 	<isElfFormat value="true"/>
-	<connection value="common/targetdb/connections/TIMSP430-USB.xml"/>
+	<connection value="common/targetdb/connections/TIMSP430-USB3.xml"/>
 	<linkerCommandFile value="lnk_msp430g2231.cmd"/>
 	<rts value="libc.a"/>
 	<createSlaveProjects value=""/>
