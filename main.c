@@ -5,7 +5,6 @@
 // SER2 P1.2
 // SER3 P1.3
 // SER4 P1.4
-// RCLK P1.5
 
 // Led 1-7 of seven segment display correspond to outputs A-G of bit shift register
 
@@ -28,6 +27,7 @@ char secondsTensDigitIndex = 0;
 char minutesUnitsDigitIndex = 0;
 char minutesTensDigitIndex = 0;
 
+// counts number of times timerA interrupt is executed
 char timeCounter = 0;
 
 int main(void){
@@ -73,17 +73,11 @@ __interrupt void Timer_A (void) {
         for (led = 6; led >= 0; led--) {
             P1OUT = digits[secondsUnitsDigitIndex][led]*2 + digits[secondsTensDigitIndex][led]*4
                     + digits[minutesUnitsDigitIndex][led]*8 + digits[minutesTensDigitIndex][led]*16;   // set ser1 to thecurrent bit for the current digit
-            _delay_cycles(1);   // time delay between ser change and srclk high
-            P1OUT |= BIT0;  // srclk high
-            _delay_cycles(1);   // pulse duration for srclk high
-            P1OUT &= ~(BIT0);   // srclk low
+            _delay_cycles(0.025);   // time delay between ser change and srclk high = 25ns
+            P1OUT |= BIT0;  // clk high
+            _delay_cycles(0.025);   // pulse duration for srclk high = 25ns
+            P1OUT &= ~(BIT0);   // clk low
         }
-
-        // set output to new values in shift registers
-        _delay_cycles(1);   // time delay between srclk pulse and rclk high
-        P1OUT |= BIT5;  // rclk high
-        _delay_cycles(1);   // pulse duration for rclk high
-        P1OUT &= ~(BIT5);   // rclk low
 
         // update seconds units digit display index every second,
         // update seconds tens digit display index when seconds units digit display index passes 9
