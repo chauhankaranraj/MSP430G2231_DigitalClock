@@ -1,6 +1,6 @@
 #include <msp430g2231.h>
 
-// SRCLK P1.0
+// CLK P1.0
 // SER1 P1.1
 // SER2 P1.2
 // SER3 P1.3
