@@ -1,7 +1,7 @@
 ******************************************************************************
                   MSP430 Linker Unix v16.9.0                   
 ******************************************************************************
->> Linked Fri Jan 20 14:28:00 2017
+>> Linked Fri Jan 20 14:27:39 2017
 
 OUTPUT FILE NAME:   <SevenSegmentDisplayClock.out>
 ENTRY POINT SYMBOL: "_c_int00_noinit_noargs_noexit"  address: 0000f82c
