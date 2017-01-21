@@ -1,18 +1,27 @@
 #include <msp430g2231.h>
 
-// SRCLK P1.0
-// SER1 P1.1
-// SER2 P1.2
-// SER3 P1.3
-// SER4 P1.4
+// CLK P1.0
+// SER A P1.1
 
-// Led 1-7 of seven segment display correspond to outputs A-G of bit shift register
+// index+1 of array digitx denotes whether led i will be on or off for the digitx
+const char digit0[] = {1, 1, 1, 1, 1, 1, 0, 0};
+const char digit1[] = {0, 1, 1, 0, 0, 0, 0, 0};
+const char digit2[] = {1, 1, 0, 1, 1, 0, 1, 0};
+const char digit3[] = {1, 1, 1, 1, 0, 0, 1, 0};
+const char digit4[] = {0, 1, 1, 0, 0, 1, 1, 0};
+const char digit5[] = {1, 0, 1, 1, 0, 1, 1, 0};
+const char digit6[] = {1, 0, 1, 1, 1, 1, 1, 0};
+const char digit7[] = {1, 1, 1, 0, 0, 0, 0, 0};
+const char digit8[] = {1, 1, 1, 1, 1, 1, 1, 0};
+const char digit9[] = {1, 1, 1, 1, 0, 1, 1, 0};
 
-int main(void){
+const char* digits[10];
 
-    // TODO: update watch dog timer to make clock display go back to 0000 when the day is over
-    WDTCTL = WDTPW | WDTHOLD;   // Stop watchdog timer
+char secondsUnitsDigitIndex = 0;
 
+int main(void) {
+    WDTCTL = WDTPW | WDTHOLD;	// Stop watch dog timer
+	
     BCSCTL1 = CALBC1_1MHZ;
     DCOCTL = CALDCO_1MHZ;
 
@@ -20,9 +29,35 @@ int main(void){
     P2DIR = 0;
 
     P1OUT = 0;  // setting all gpio to zero initially
-    P1DIR = 1 + 2 + 4 + 8 + 16 + 32; //  P1.0 - P1.5 are outputs, P1.6 and P1.7 are not being used
+    P1DIR |= (BIT0 + BIT1); //  P1.0 - P1.5 are outputs, P1.6 and P1.7 are not being used
 
+    digits[0] = digit0;
+    digits[1] = digit1;
+    digits[2] = digit2;
+    digits[3] = digit3;
+    digits[4] = digit4;
+    digits[5] = digit5;
+    digits[6] = digit6;
+    digits[7] = digit7;
+    digits[8] = digit8;
+    digits[9] = digit9;
+
+    signed char led;
     while(1) {
-        P1OUT = 1+2;
+        for (led = 7; led >= 0; led--) {
+            P1OUT = digits[secondsUnitsDigitIndex][led]*2;
+            _delay_cycles(0.025);   // time delay between ser change and srclk high = 25ns
+            P1OUT |= BIT0;  // clk high
+            _delay_cycles(0.025);   // pulse duration for srclk high = 25ns
+            P1OUT &= ~(BIT0);   // clk low
+        }
+
+        _delay_cycles(1000000);
+
+        if (secondsUnitsDigitIndex==9) {
+            secondsUnitsDigitIndex = 0;
+        } else {
+            secondsUnitsDigitIndex++;
+        }
     }
 }
