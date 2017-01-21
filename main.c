@@ -1,26 +1,5 @@
 #include <msp430g2231.h>
 
-// CLK P1.0
-// SER1 P1.1
-// SER2 P1.2
-// SER3 P1.3
-// SER4 P1.4
-// RCLK P1.5
-
-// Led 1-7 of seven segment display correspond to outputs A-G of bit shift register
-
-// index i of array digitx denotes whether led i will be on or off for the digitx
-const char digit0[] = {1, 1, 1, 1, 1, 1, 0};
-const char digit1[] = {0, 1, 1, 0, 0, 0, 0};
-const char digit2[] = {1, 1, 0, 1, 1, 0, 1};
-const char digit3[] = {1, 1, 1, 1, 0, 0, 1};
-const char digit4[] = {0, 1, 1, 0, 0, 1, 1};
-const char digit5[] = {1, 0, 1, 1, 0, 1, 1};
-const char digit6[] = {1, 0, 1, 1, 1, 1, 1};
-const char digit7[] = {1, 1, 1, 0, 0, 0, 0};
-const char digit8[] = {1, 1, 1, 1, 1, 1, 1};
-const char digit9[] = {1, 1, 1, 1, 0, 1, 1};
-
 // P1.0 CLK
 // P1.1 SER seconds units
 // P1.2 SER seconds tens
